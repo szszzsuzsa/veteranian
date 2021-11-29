@@ -35,13 +35,20 @@ const App = () => {
   const submitForm = () => {
     setIsLoading(true)
     setShowForm(false)
-    fetch(url, {
+
+
+    
+    fetch(url, 'api/pets', {
         method: "POST",
         headers: {
             'Accept': "application/json",
             'Content-Type': "application/json",
         },
-        body: JSON.stringify(client)
+        body: 
+        {
+          name: petName, 
+      isVaccinatedBo: true
+    },
     })
         .then((resp) => setResponse(true))
         .catch((err) => setResponse(false))
