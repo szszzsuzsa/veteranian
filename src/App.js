@@ -1,58 +1,95 @@
-import './App.css';
-import React, {useState, useEffect} from 'react';
-import Clients from './Components/Clients';
-import LoadingMask from './Components/LoadingMask';
+import "./App.css";
+import React, { useState, useEffect } from "react";
+import Clients from "./Components/Clients";
+import Pets from "./Components/Pets";
 
 const App = () => {
+  const [client, setClient] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [response, setResponse] = useState();
+  const [filteredClient, setFilteredClient] = useState();
+  const [petName, setPetName] = useState({});
+  const [isVaccinatedBo, setIsVaccinatedBo] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [showForm, setShowForm] = useState(true);
 
-  const [client, setClients] = useState(null);
-  const [showSub, setShowSub] = useState(null);
-  const [response, setResponse] = useState(null);
+  const url = `api/clients?search=${searchTerm}`;
 
-  const url = "/api/clients?search=${input}";
-
-  const getClients = async () => {
+  const getClient = async () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      setClients(data);
+      setClient(data);
+      setFilteredClient(
+        client.filter((client) => client.name.includes(searchTerm))
+      );
+      console.log(client);
     } catch (error) {
       setResponse(false);
+      //console.log(response)
     }
   };
 
-  const subHandler = () => {
-    setTimeout(function () {
-      setShowSub(true)
-    }, 5000)
-  }
 
-  useEffect(() => {
-    getClients()
-    subHandler()
-  }, [])
+  const submitForm = () => {
+    setIsLoading(true)
+    setShowForm(false)
+    fetch(url, {
+        method: "POST",
+        headers: {
+            'Accept': "application/json",
+            'Content-Type': "application/json",
+        },
+        body: JSON.stringify(client)
+    })
+        .then((resp) => setResponse(true))
+        .catch((err) => setResponse(false))
+        .finally(() => setTimeout(setIsLoading(false), 5000))
+}
+
 
   return (
     <div className="App">
-      
-      <div className="App">
       <h1>Veteranian admin-clients</h1>
+      <div>
+        <div>
+          <input onChange={(e) => setSearchTerm(e.target.value)} />
+          <button disabled={searchTerm.length <= 2} onClick={getClient}>Search</button>
+        </div>
 
-      <div><input onClick={()=>setClients(client)} ></input>
-      <button>Get</button></div>
-      {client !== null ? client.map((client, index) => <Clients key={index} client={client} />) :<LoadingMask />}
-   
+        {response === null ? <p></p> : <div>
+         {client.map((client, i) => (
+            <div className="Client" key={client.name}>
+              {" "}
+              <Clients key={i} client={client.name} />
+
+
+              <div className="Pets">
+              {client.pets.map((pet, key) => (
+                <div className="Pets" key={key}>
+                  {" "}
+                  <p>
+                     {pet.name} - Vaccinated: {" "}
+                   
+                      <button key={pet.name}
+                      
+                        onClick={submitForm}
+                      >
+                        {isVaccinatedBo.toString()}
+                      </button>
+                 {" "}
+                 </p>
+                </div>
+              ))} </div>
+
+
+            </div>
+          ))}
+        </div>}
+      </div>
     </div>
-    <div>     <Clients></Clients>
-</div>
+  );
+};
 
-
-
-
-
-    </div>
-  )
-}
-
-export default App
+export default App;
