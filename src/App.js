@@ -36,19 +36,14 @@ const App = () => {
     setIsLoading(true)
     setShowForm(false)
 
-
     
-    fetch(url, 'api/pets', {
+    fetch(url, {
         method: "POST",
         headers: {
             'Accept': "application/json",
             'Content-Type': "application/json",
         },
-        body: 
-        {
-          name: petName, 
-      isVaccinatedBo: true
-    },
+        body: JSON.stringify(client)
     })
         .then((resp) => setResponse(true))
         .catch((err) => setResponse(false))
