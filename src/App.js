@@ -1,18 +1,12 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
-import Clients from "./Components/Clients";
-import Pets from "./Components/Pets";
+import React, { useState } from "react";
+import Client from "./components/Client";
 
 const App = () => {
   const [client, setClient] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [response, setResponse] = useState();
-  const [filteredClient, setFilteredClient] = useState();
-  const [petName, setPetName] = useState({});
-  const [isVaccinatedBo, setIsVaccinatedBo] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [showForm, setShowForm] = useState(true);
 
   const url = `api/clients?search=${searchTerm}`;
 
@@ -20,35 +14,15 @@ const App = () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      setClient(data);
-      setFilteredClient(
-        client.filter((client) => client.name.includes(searchTerm))
-      );
+      setClient(data)
       console.log(client);
     } catch (error) {
       setResponse(false);
-      //console.log(response)
     }
   };
 
 
-  const submitForm = () => {
-    setIsLoading(true)
-    setShowForm(false)
-
-    
-    fetch(url, {
-        method: "POST",
-        headers: {
-            'Accept': "application/json",
-            'Content-Type': "application/json",
-        },
-        body: JSON.stringify(client)
-    })
-        .then((resp) => setResponse(true))
-        .catch((err) => setResponse(false))
-        .finally(() => setTimeout(setIsLoading(false), 5000))
-}
+  
 
 
   return (
@@ -62,35 +36,24 @@ const App = () => {
 
         {response === null ? <p></p> : <div>
          {client.map((client, i) => (
-            <div className="Client" key={client.name}>
+            <div className="Client">
               {" "}
-              <Clients key={i} client={client.name} />
-
-
-              <div className="Pets">
-              {client.pets.map((pet, key) => (
-                <div className="Pets" key={key}>
-                  {" "}
-                  <p>
-                     {pet.name} - Vaccinated: {" "}
-                   
-                      <button key={pet.name}
-                      
-                        onClick={submitForm}
-                      >
-                        {isVaccinatedBo.toString()}
-                      </button>
-                 {" "}
-                 </p>
-                </div>
-              ))} </div>
-
-
-            </div>
-          ))}
+              <Client key={i} client={client} />
+              </div>
+              ))}
         </div>}
-      </div>
-    </div>
+
+
+             
+                  
+               
+              
+
+
+        </div>
+        
+        </div>
+      
   );
 };
 

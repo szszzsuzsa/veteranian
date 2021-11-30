@@ -1,17 +1,16 @@
-import React, {useState} from "react";
+import React from "react";
 import Pets from "./Pets"
-//import { useState } from "react";
 
 
 const Client = ({client, pets, key, pet, i}) => {
 
-
     return (
-        <div>
-             {client}<br />
-
-        </div>
-    )
-}
-
+        
+            <div className="Client">
+                <p>{client.name}</p> 
+                
+                {client.pets.map((pet, key) => (<Pets key={key} pet={pet}/>))}
+            </div>
+    
+              )}
 export default Client;
